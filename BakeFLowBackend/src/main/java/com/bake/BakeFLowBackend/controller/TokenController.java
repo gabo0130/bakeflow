@@ -33,9 +33,9 @@ public class TokenController {
 
             String token = TokenUtils.createToken(authentication.getName());
             tokenResponse.setToken(token);
-            return ResponseEntity.status(200).body(new SuccessResponse("Success",tokenResponse));
+            return ResponseEntity.status(200).body(BaseResponse.success("Token generado con exito", tokenResponse));
         } catch (Exception e) {;
-            return ResponseEntity.status(401).body(new ErrorResponse("Validacion errada",null));
+            return ResponseEntity.status(401).body(BaseResponse.error("Credenciales incorrectas", null));
         }
     }
 }

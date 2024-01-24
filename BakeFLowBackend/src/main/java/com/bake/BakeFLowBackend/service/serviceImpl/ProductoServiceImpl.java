@@ -21,28 +21,5 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public void crearProducto() {
-        Producto producto = new Producto();
-        producto.setNombre("Producto 1");
-        producto.setDescripcion("Descripcion 1");
-        producto.setPrecio(100.0);
-        Movimiento movimiento = new Movimiento();
-        movimiento.setCantidad(10);
-        TipoMovimiento tipoMovimiento = new TipoMovimiento();
-        tipoMovimiento.setNombre("Entrada");
-        tipoMovimiento.setOperacion(Operation.SUMA);
-        tipoMovimiento.setEsVenta(false);
-        movimiento.setTipoMovimiento(tipoMovimiento);
-        Set<Movimiento> movimientos = new HashSet<>();
-        movimientos.add(movimiento);
-        producto.setMovimientos(movimientos);
-
-
-        ProductoDTO productoDTO = productoConverter.toProductoDTO(producto);
-
-        System.out.println(productoDTO);
-
-
-        producto.setMovimientos(null);
-        System.out.println(producto);
     }
 }

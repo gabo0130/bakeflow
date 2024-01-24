@@ -14,4 +14,12 @@ public class BaseResponse <T>{
         this.message = message;
         this.data = data;
     }
+
+    public static <T> BaseResponse<T> success(String message, T data){
+        return new SuccessResponse<>(message, data);
+    }
+
+    public static <T> BaseResponse<T> error(String message, T data){
+        return new ErrorResponse<>(message, data);
+    }
 }
