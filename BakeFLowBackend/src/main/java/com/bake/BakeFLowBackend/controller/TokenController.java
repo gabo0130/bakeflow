@@ -1,9 +1,9 @@
 package com.bake.BakeFLowBackend.controller;
 
-import com.bake.BakeFLowBackend.response.BaseResponse;
-import com.bake.BakeFLowBackend.response.ErrorResponse;
-import com.bake.BakeFLowBackend.response.SuccessResponse;
-import com.bake.BakeFLowBackend.response.TokenResponse;
+import com.bake.BakeFLowBackend.dto.response.BaseResponse;
+import com.bake.BakeFLowBackend.dto.response.ErrorResponse;
+import com.bake.BakeFLowBackend.dto.response.SuccessResponse;
+import com.bake.BakeFLowBackend.dto.response.TokenResponse;
 import com.bake.BakeFLowBackend.security.AuthCredentials;
 import com.bake.BakeFLowBackend.security.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;

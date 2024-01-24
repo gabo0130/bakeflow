@@ -23,4 +23,8 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
+    @ManyToOne
+    @JoinColumn(name = "tipo_documento_id", nullable = false)
+    private TipoDocumento tipoDocumento;
+
 }
