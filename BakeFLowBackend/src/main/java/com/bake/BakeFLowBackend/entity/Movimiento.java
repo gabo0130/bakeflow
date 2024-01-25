@@ -1,5 +1,7 @@
 package com.bake.BakeFLowBackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,6 +30,7 @@ public class Movimiento {
 
     @ManyToOne
     @JoinColumn(name = "producto_id", nullable = false)
+    @JsonIgnore
     private Producto producto;
 
     @ManyToOne
@@ -43,5 +46,6 @@ public class Movimiento {
     public void onCreate() {
         fecha = new Date();
     }
+
 
 }

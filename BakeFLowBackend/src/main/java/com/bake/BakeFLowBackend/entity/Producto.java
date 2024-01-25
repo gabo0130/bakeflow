@@ -1,8 +1,11 @@
 package com.bake.BakeFLowBackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,7 +32,8 @@ public class Producto {
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
-    private Set<Movimiento> movimientos;
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("producto")
+    private List<Movimiento> movimientos;
 
 }

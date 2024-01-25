@@ -1,7 +1,12 @@
 package com.bake.BakeFLowBackend;
 
+import com.bake.BakeFLowBackend.controller.ProductoController;
+import com.bake.BakeFLowBackend.controller.UsuarioController;
 import com.bake.BakeFLowBackend.converter.ProductoConverter;
+import com.bake.BakeFLowBackend.dto.CategoriaDTO;
 import com.bake.BakeFLowBackend.dto.ProductoDTO;
+import com.bake.BakeFLowBackend.dto.UsuarioDTO;
+import com.bake.BakeFLowBackend.dto.response.BaseResponse;
 import com.bake.BakeFLowBackend.entity.Movimiento;
 import com.bake.BakeFLowBackend.entity.Producto;
 import com.bake.BakeFLowBackend.entity.TipoMovimiento;
@@ -11,39 +16,55 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
 class BakeFLowBackendApplicationTests {
 
+
 	@Autowired
-	ProductoConverter productoConverter;
+	UsuarioController usuarioController;
+
+	@Autowired
+	ProductoController productoController;
 
 	@Test
 	void contextLoads() {
-		Producto producto = new Producto();
-		producto.setNombre("Producto 1");
-		producto.setDescripcion("Descripcion 1");
-		producto.setPrecio(100.0);
-		Movimiento movimiento = new Movimiento();
-		movimiento.setCantidad(10);
-		TipoMovimiento tipoMovimiento = new TipoMovimiento();
-		tipoMovimiento.setNombre("Entrada");
-		tipoMovimiento.setOperacion(Operation.SUMA);
-		tipoMovimiento.setEsVenta(false);
-		movimiento.setTipoMovimiento(tipoMovimiento);
-		Set<Movimiento> movimientos = new HashSet<>();
-		movimientos.add(movimiento);
-		producto.setMovimientos(movimientos);
+	}
 
+	@Test
+	void crearUsuario() {
+		UsuarioDTO usuarioDTO = new UsuarioDTO();
+		usuarioDTO.setNombre("Nombre");
+		usuarioDTO.setDocumento("Documento");
+		usuarioDTO.setUsuario("Usuario");
+		usuarioDTO.setPassword("Password");
+		usuarioDTO.setTipoDocumentoId(1L);
+		usuarioController.registrarUsuario(usuarioDTO);
+	}
 
-		ProductoDTO productoDTO = productoConverter.toProductoDTO(producto);
+	@Test
+	void obtenerUsuarios() {
+		usuarioController.obtenerUsuarios();
 
-		System.out.println(productoDTO);
+	}
 
+	@Test
+	void registrarProducto() {
+		ProductoDTO productoDTO = new ProductoDTO();
+		productoDTO.setNombre("torta");
+		productoDTO.setDescripcion("toratatatat");
+		productoDTO.setPrecio(25000);
+		productoDTO.setCantidadInicial(1);
+		productoDTO.setCategoriaId(3L);
+		productoDTO.setCostoUnitario(18000);
+		productoController.registrarProducto(productoDTO);
+	}
 
-		producto.setMovimientos(null);
-		System.out.println(producto);
+	@Test
+	void obtenerProductos() {
+		productoController.obtenerProductos(null,null,null,null);
 	}
 
 }

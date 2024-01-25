@@ -14,19 +14,23 @@ import java.util.concurrent.atomic.AtomicReference;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProductoConverter {
 
-
     @Mappings({
             @Mapping(source = "nombre", target = "nombre"),
             @Mapping(source = "descripcion", target = "descripcion"),
             @Mapping(source = "precio", target = "precio"),
-            @Mapping(source = "categoria", target = "categoria"),
-            @Mapping(source = "movimientos", target = "existencias", qualifiedByName ="CalcularExistencias")
+            @Mapping(source = "categoriaId", target = "categoria.id")
     })
+    Producto toProducto(ProductoDTO productoDTO);
+
+    @InheritInverseConfiguration
+    @Mapping(source = "movimientos", target = "existencias", qualifiedByName ="CalcularExistencias")
     ProductoDTO toProductoDTO(Producto producto);
+
+    List<ProductoDTO> toProductoDTOs(List<Producto> productos);
 
 
     @Named("CalcularExistencias")
-    default int calcularExistencias(Set<Movimiento> movimientos) {
+    default int calcularExistencias(List<Movimiento> movimientos) {
         AtomicReference<Integer> existenciasCalculadas = new AtomicReference<>(0);
         movimientos.forEach(movimiento -> {
             if (movimiento.getTipoMovimiento().esSuma()) {

@@ -10,11 +10,19 @@ public class ProductoDTO {
 
     String descripcion;
 
-    Double precio;
+    Integer precio;
 
     int existencias;
 
-    CategoriaDTO categoria;
+    Long categoriaId;
+
+    Integer cantidadInicial;
+
+    Integer costoUnitario;
+
+    Integer costoTotal;
+
+
 
 
 }
