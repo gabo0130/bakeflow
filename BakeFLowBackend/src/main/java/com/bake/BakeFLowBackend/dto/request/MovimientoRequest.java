@@ -17,7 +17,6 @@ public class MovimientoRequest {
     @NotNull(message = "El ID del producto no puede ser nulo")
     private Long productoId;
 
-    @NotNull(message = "El ID del tipo de movimiento no puede ser nulo")
     private Long tipoMovimientoId;
 
 }

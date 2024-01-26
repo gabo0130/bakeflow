@@ -1,6 +1,7 @@
 package com.bake.BakeFLowBackend.service.serviceImpl;
 
 import com.bake.BakeFLowBackend.dto.request.MovimientoRequest;
+import com.bake.BakeFLowBackend.dto.request.MovimientosRequest;
 import com.bake.BakeFLowBackend.entity.Movimiento;
 import com.bake.BakeFLowBackend.entity.Producto;
 import com.bake.BakeFLowBackend.entity.TipoMovimiento;
@@ -9,6 +10,7 @@ import com.bake.BakeFLowBackend.repository.MovimientoRepository;
 import com.bake.BakeFLowBackend.service.MovimientoService;
 import com.bake.BakeFLowBackend.service.UsuarioService;
 import com.bake.BakeFLowBackend.util.Operation;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +37,12 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Override
     public void registrarMovimiento(Movimiento movimiento) {
         movimientoRepository.save(movimiento);
+    }
+
+    @Override
+    @Transactional
+    public void registrarMovimiento(MovimientosRequest movimiento) {
+        movimiento.getMovimientos().forEach(this::registrarMovimiento);
     }
 
     @Override
