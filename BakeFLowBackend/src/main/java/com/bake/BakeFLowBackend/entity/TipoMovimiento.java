@@ -2,6 +2,7 @@ package com.bake.BakeFLowBackend.entity;
 
 
 import com.bake.BakeFLowBackend.util.Operation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,9 +20,11 @@ public class TipoMovimiento {
     private String descripcion;
 
     @Column(nullable = false)
+    @JsonIgnore
     private Boolean esVenta;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String operacion;
 
     public Boolean esSuma() {

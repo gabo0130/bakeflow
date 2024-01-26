@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public interface ProductoConverter {
 
     @Mappings({
+
             @Mapping(source = "nombre", target = "nombre"),
             @Mapping(source = "descripcion", target = "descripcion"),
             @Mapping(source = "precio", target = "precio"),
@@ -24,6 +25,7 @@ public interface ProductoConverter {
 
     @InheritInverseConfiguration
     @Mapping(source = "movimientos", target = "existencias", qualifiedByName ="CalcularExistencias")
+    @Mapping(source="id", target="id")
     ProductoDTO toProductoDTO(Producto producto);
 
     List<ProductoDTO> toProductoDTOs(List<Producto> productos);

@@ -11,6 +11,7 @@ import com.bake.BakeFLowBackend.service.MovimientoService;
 import com.bake.BakeFLowBackend.service.ProductoService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class ProductoServiceImpl implements ProductoService {
     ProductoConverter productoConverter;
 
     @Autowired
+    @Lazy
     MovimientoService movimientoService;
 
     @Autowired
@@ -50,13 +52,6 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public List<ProductoDTO> obtenerProductos(String nombre, String descripcion, Long categoriaId, Double precio) {
         List<Producto> productos = productoRepository.buscarProductosConFiltros(nombre,descripcion, categoriaId, precio);
-
-        List<ProductoDTO> productoDTOS = productoConverter.toProductoDTOs(productos);
-        productoDTOS.forEach(productoDTO -> {
-            System.out.println(productoDTO.getNombre()+" "+productoDTO.getExistencias());
-
-        });
-
         return productoConverter.toProductoDTOs(productos);
     }
 
@@ -68,10 +63,25 @@ public class ProductoServiceImpl implements ProductoService {
         return productoConverter.toProductoDTO(producto);
     }
 
+
+    public Boolean canBeMinus(Long id, Integer cantidad) {
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> {
+            return new IllegalArgumentException("Producto no encontrado");
+        });
+         ProductoDTO dto = productoConverter.toProductoDTO(producto);
+        return dto.getExistencias() >= cantidad;
+    }
+
     @Override
     public Long actualizarProcuto(Long id, ProductoDTO productoDTO) {
-        return null;
-    }
+        //Buscar el producto y actualizar los datos que se puedan actualizar
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> {
+            return new IllegalArgumentException("Producto no encontrado");
+        });
+        producto = productoConverter.toProducto(productoDTO);
+        return productoRepository.save(producto).getId()
+                ;
+        }
 
     @Override
     public void eliminarProducto(Long id) {
