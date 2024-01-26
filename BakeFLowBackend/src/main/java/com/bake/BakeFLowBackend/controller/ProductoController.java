@@ -16,7 +16,8 @@ public class ProductoController {
 
     @PostMapping
     public ResponseEntity<BaseResponse> registrarProducto(@RequestBody ProductoDTO productoDTO) {
-        return ResponseEntity.ok(BaseResponse.success("Producto registrado con éxito", productoService.registrarProducto(productoDTO)));
+        return ResponseEntity.ok(BaseResponse.success("Producto registrado con éxito",
+                productoService.registrarProducto(productoDTO)));
     }
 
     @GetMapping
