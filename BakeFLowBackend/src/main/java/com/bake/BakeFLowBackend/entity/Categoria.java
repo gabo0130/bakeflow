@@ -1,5 +1,6 @@
 package com.bake.BakeFLowBackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class Categoria {
     private String descripcion;
 
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("categoria")
     private List<Producto> productos;
 
 

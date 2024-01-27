@@ -27,7 +27,7 @@ public class WebSecurityConfig  {
     SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager auth) throws Exception {
         JWTAutethenticationFilter jwtAutethenticationFilter = new JWTAutethenticationFilter();
         jwtAutethenticationFilter.setAuthenticationManager(auth);
-        return http
+        return  http.cors().and()
                 .csrf().disable()
                 .authorizeRequests()
                 .requestMatchers("/token")
@@ -41,6 +41,8 @@ public class WebSecurityConfig  {
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+
 
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {

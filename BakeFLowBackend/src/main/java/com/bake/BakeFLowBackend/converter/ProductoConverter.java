@@ -34,13 +34,15 @@ public interface ProductoConverter {
     @Named("CalcularExistencias")
     default int calcularExistencias(List<Movimiento> movimientos) {
         AtomicReference<Integer> existenciasCalculadas = new AtomicReference<>(0);
-        movimientos.forEach(movimiento -> {
-            if (movimiento.getTipoMovimiento().esSuma()) {
-                existenciasCalculadas.updateAndGet(v -> v + movimiento.getCantidad());
-            } else {
-                existenciasCalculadas.updateAndGet(v -> v - movimiento.getCantidad());
-            }
-        });
+        if(movimientos != null){
+            movimientos.forEach(movimiento -> {
+                if (movimiento.getTipoMovimiento().esSuma()) {
+                    existenciasCalculadas.updateAndGet(v -> v + movimiento.getCantidad());
+                } else {
+                    existenciasCalculadas.updateAndGet(v -> v - movimiento.getCantidad());
+                }
+            });
+        }
         return existenciasCalculadas.get();
     }
 }

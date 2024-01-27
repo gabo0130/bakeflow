@@ -13,9 +13,11 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/Movimiento")
+@CrossOrigin(origins = "http://localhost:5173")
 public class MovimientoController {
 
     @Autowired
@@ -24,13 +26,13 @@ public class MovimientoController {
     @PostMapping
     public ResponseEntity<BaseResponse> registrarMovimiento(@RequestBody @Valid MovimientoRequest movimientoRequest,
                                                             Errors errors) {
-        if (movimientoRequest.getCostoUnitario() == null && movimientoRequest.getCostoTotal() == null) {
+        /*if (movimientoRequest.getCostoUnitario() == null && movimientoRequest.getCostoTotal() == null) {
             errors.rejectValue("costoUnitario || costoTotal", "costoUnitario || costoTotal", "Debe ingresar el costo unitario o el costo total");
         }
 
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(BaseResponse.error("Error al registrar el movimiento", errors.getAllErrors()));
-        };
+        };*/
 
         movimientoService.registrarMovimiento(movimientoRequest);
         return ResponseEntity.ok(BaseResponse.success("Movimiento registrado con éxito",null));
@@ -53,9 +55,24 @@ public class MovimientoController {
     }
 
 
-    @GetMapping
-    public void obtenerMovimiento() {
+    @GetMapping("/reporteMovimientos")
+    public ResponseEntity<BaseResponse> reporteMovimientos(@RequestParam (required = false) Long productoId,
+                                                           @RequestParam (required = false)Boolean esVenta,
+                                                           @RequestParam (required = false)Date fechaInicio,
+                                                           @RequestParam (required = false) Date fechaFin) {
+        return ResponseEntity.ok(BaseResponse.success("Movimientos obtenidos con éxito", movimientoService.informeMovimientosEntreFechas(productoId, esVenta, fechaInicio, fechaFin)));
+    }
 
+    @GetMapping("/reporteVentas")
+    public ResponseEntity<BaseResponse> reporteVentas(@RequestParam (required = false) Long productoId,
+                                                           @RequestParam(required = false) Date fechaInicio,
+                                                           @RequestParam (required = false)Date fechaFin) {
+        return ResponseEntity.ok(BaseResponse.success("Movimientos obtenidos con éxito", movimientoService.informeVentasTotales(productoId, fechaInicio, fechaFin)));
+    }
+
+    @GetMapping("/reporteVentasXcosto")
+    public ResponseEntity<BaseResponse> reporteVentasXcosto(@RequestParam (required = false) Long productoId) {
+        return ResponseEntity.ok(BaseResponse.success("Movimientos obtenidos con éxito", movimientoService.informeVentasTotalesXcosto(productoId)));
     }
 
 

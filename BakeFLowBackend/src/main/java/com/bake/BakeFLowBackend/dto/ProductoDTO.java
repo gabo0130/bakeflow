@@ -1,9 +1,11 @@
 package com.bake.BakeFLowBackend.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductoDTO {
 
     Long id;
@@ -12,7 +14,7 @@ public class ProductoDTO {
 
     String descripcion;
 
-    Integer precio;
+    Double precio;
 
     int existencias;
 
@@ -20,9 +22,9 @@ public class ProductoDTO {
 
     Integer cantidadInicial;
 
-    Integer costoUnitario;
+    Double costoUnitario;
 
-    Integer costoTotal;
+    Double costoTotal;
 
 
 

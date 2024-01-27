@@ -23,13 +23,11 @@ public class Producto {
     private String descripcion;
 
     @Column(nullable = false)
-    private double precio;
-
-    @Column(nullable = false)
-    private int cantidadInicial;
+    private Double precio;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
+    @JsonIgnoreProperties("productos")
     private Categoria categoria;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

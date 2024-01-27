@@ -10,9 +10,9 @@ public class MovimientoRequest {
 
     @NotNull(message = "La cantidad no puede ser nula")
     private Integer cantidad;
-    private Integer costoTotal;
+    private Double costoTotal;
 
-    private Integer costoUnitario;
+    private Double costoUnitario;
 
     @NotNull(message = "El ID del producto no puede ser nulo")
     private Long productoId;

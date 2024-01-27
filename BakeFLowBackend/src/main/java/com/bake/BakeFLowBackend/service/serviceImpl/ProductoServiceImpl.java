@@ -39,9 +39,6 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional
     public Long registrarProducto(ProductoDTO productoDTO) {
         Producto producto = productoConverter.toProducto(productoDTO);
-        if (productoDTO.getCantidadInicial() == null) {
-            producto.setCantidadInicial(0);
-        }
 
         // Guarda el producto primero
         producto = productoRepository.save(producto);
