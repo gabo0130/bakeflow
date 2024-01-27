@@ -10,6 +10,8 @@ public class ProductoVendidoResponse {
 
     Integer cantidad;
 
+    Integer cantidadPerdida;
+
     Double precioVentaPromedio;
 
     Double totalVenta;
@@ -17,4 +19,6 @@ public class ProductoVendidoResponse {
     Double costoPromedio;
 
     Double totalCosto;
+
+    Double ganancia;
 }

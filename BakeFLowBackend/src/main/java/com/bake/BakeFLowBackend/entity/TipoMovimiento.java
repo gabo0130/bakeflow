@@ -20,7 +20,6 @@ public class TipoMovimiento {
     private String descripcion;
 
     @Column(nullable = false)
-    @JsonIgnore
     private Boolean esVenta;
 
     @Column(nullable = false)

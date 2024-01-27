@@ -51,7 +51,10 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Override
     @Transactional
     public void registrarMovimiento(MovimientosRequest movimiento) {
-        movimiento.getMovimientos().forEach(this::registrarMovimiento);
+        movimiento.getMovimientos().forEach(movimientoRequest -> {
+            movimientoRequest.setTipoMovimientoId(movimiento.getTipoMovimientoId());
+            registrarMovimiento(movimientoRequest);
+        });
     }
 
     @Override
@@ -142,6 +145,9 @@ public class MovimientoServiceImpl implements MovimientoService {
             ProductoVendidoResponse producto = map.get(movimiento.getProducto().getNombre());
             if (producto == null){
                 producto = new ProductoVendidoResponse();
+                producto.setCantidad(0);
+                producto.setTotalVenta(0D);
+                producto.setTotalCosto(0D);
                 if(movimiento.esVenta()){
                     producto.setCantidad(movimiento.getCantidad());
                     producto.setTotalVenta(movimiento.getCostoTotal());
@@ -149,14 +155,9 @@ public class MovimientoServiceImpl implements MovimientoService {
                     totalVentas.updateAndGet(v -> v + movimiento.getCostoTotal());
                 }else if(movimiento.esPerdida()){
                     producto.setCantidad(movimiento.getCantidad());
-                    producto.setTotalVenta(0D);
-                    producto.setTotalCosto(0D);
+                    producto.setCantidadPerdida(movimiento.getCantidad());
                 }else if(movimiento.esCompra()){
-                    producto.setCantidad(0);
-                    producto.setTotalVenta(0D);
-                    producto.setCostoPromedio(movimiento.getCostoTotal() / movimiento.getCantidad());
-                    producto.setTotalCosto(movimiento.getCostoTotal());
-                    totalCostos.updateAndGet(v -> v + movimiento.getCostoTotal());
+                    producto.setCostoPromedio(movimiento.getCostoUnitario());
                 }
                 map.put(movimiento.getProducto().getNombre(),producto);
             }else{
@@ -167,12 +168,20 @@ public class MovimientoServiceImpl implements MovimientoService {
                     totalVentas.updateAndGet(v -> v + movimiento.getCostoTotal());
                 }else if(movimiento.esPerdida()){
                     producto.setCantidad(producto.getCantidad() + movimiento.getCantidad());
+                    producto.setCantidadPerdida(producto.getCantidadPerdida() + movimiento.getCantidad());
                 }else if(movimiento.esCompra()){
-                    producto.setTotalCosto(producto.getTotalCosto() + movimiento.getCostoTotal());
-                    totalCostos.updateAndGet(v -> v + movimiento.getCostoTotal());
+                    producto.setCostoPromedio(movimiento.getCostoUnitario());
                 }
+                producto.setTotalCosto(producto.getCantidad() * producto.getCostoPromedio());
+               // System.out.println(movimiento.getProducto().getNombre()+" "+producto.getCostoPromedio()+" "+producto.getCantidad()+" "+producto.getTotalCosto());
+                producto.setGanancia(producto.getTotalVenta() - producto.getTotalCosto());
+                Double aux = producto.getTotalCosto();
+                totalCostos.updateAndGet(v -> v + aux);
             }
         });
+        //borrar productos que no se vendieron
+        map.entrySet().removeIf(entry -> entry.getValue().getCantidad() == 0);
+        totalGanancias = totalVentas.get() - totalCostos.get();
         InformeVentasXCostosResponse response = new InformeVentasXCostosResponse(map,totalVentas.get(),totalCostos.get(),totalGanancias);
         return response;
     }
