@@ -26,7 +26,4 @@ public class ProductoDTO {
 
     Double costoTotal;
 
-
-
-
 }

@@ -26,13 +26,13 @@ public class MovimientoController {
     @PostMapping
     public ResponseEntity<BaseResponse> registrarMovimiento(@RequestBody @Valid MovimientoRequest movimientoRequest,
                                                             Errors errors) {
-        /*if (movimientoRequest.getCostoUnitario() == null && movimientoRequest.getCostoTotal() == null) {
+        if (movimientoRequest.getCostoUnitario() == null && movimientoRequest.getCostoTotal() == null) {
             errors.rejectValue("costoUnitario || costoTotal", "costoUnitario || costoTotal", "Debe ingresar el costo unitario o el costo total");
         }
 
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(BaseResponse.error("Error al registrar el movimiento", errors.getAllErrors()));
-        };*/
+        };
 
         movimientoService.registrarMovimiento(movimientoRequest);
         return ResponseEntity.ok(BaseResponse.success("Movimiento registrado con éxito",null));

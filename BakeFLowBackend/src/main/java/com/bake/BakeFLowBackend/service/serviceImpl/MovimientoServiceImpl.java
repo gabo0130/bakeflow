@@ -154,6 +154,7 @@ public class MovimientoServiceImpl implements MovimientoService {
                 }else if(movimiento.esCompra()){
                     producto.setCantidad(0);
                     producto.setTotalVenta(0D);
+                    producto.setCostoPromedio(movimiento.getCostoTotal() / movimiento.getCantidad());
                     producto.setTotalCosto(movimiento.getCostoTotal());
                     totalCostos.updateAndGet(v -> v + movimiento.getCostoTotal());
                 }
