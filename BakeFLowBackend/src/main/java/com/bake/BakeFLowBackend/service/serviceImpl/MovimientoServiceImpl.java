@@ -6,23 +6,19 @@ import com.bake.BakeFLowBackend.dto.request.MovimientosRequest;
 import com.bake.BakeFLowBackend.dto.response.InformeVentasResponse;
 import com.bake.BakeFLowBackend.dto.response.InformeVentasXCostosResponse;
 import com.bake.BakeFLowBackend.dto.response.ProductoVendidoResponse;
-import com.bake.BakeFLowBackend.entity.Movimiento;
-import com.bake.BakeFLowBackend.entity.Producto;
-import com.bake.BakeFLowBackend.entity.TipoMovimiento;
-import com.bake.BakeFLowBackend.entity.Usuario;
+import com.bake.BakeFLowBackend.entity.*;
 import com.bake.BakeFLowBackend.repository.MovimientoRepository;
 import com.bake.BakeFLowBackend.service.MovimientoService;
+import com.bake.BakeFLowBackend.service.VentaService;
 import com.bake.BakeFLowBackend.util.Operation;
+import com.bake.BakeFLowBackend.util.ValiDate;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -38,6 +34,9 @@ public class MovimientoServiceImpl implements MovimientoService {
     ProductoServiceImpl productoService;
 
     @Autowired
+    VentaService ventaService;
+
+    @Autowired
     TipoMovimientoServiceImpl tipoMovimientoService;
 
     @Autowired
@@ -51,14 +50,35 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Override
     @Transactional
     public void registrarMovimiento(MovimientosRequest movimiento) {
-        movimiento.getMovimientos().forEach(movimientoRequest -> {
-            movimientoRequest.setTipoMovimientoId(movimiento.getTipoMovimientoId());
-            registrarMovimiento(movimientoRequest);
-        });
+        TipoMovimiento tipoMovimiento = tipoMovimientoService.obtenerTipoMovimiento(movimiento.getTipoMovimientoId());
+
+        if(tipoMovimiento.getEsVenta()){
+            Venta venta = new Venta();
+            venta.setDetalles("Venta de productos");
+            AtomicReference<Double> totalVenta = new AtomicReference<>(0d);
+            List<VentaMovimiento> ventaMovimientos = new ArrayList<>();
+            movimiento.getMovimientos().forEach(movimientoRequest -> {
+                movimientoRequest.setTipoMovimientoId(movimiento.getTipoMovimientoId());
+                Movimiento mov = registrarMovimiento(movimientoRequest);
+                totalVenta.updateAndGet(v -> v + mov.getCostoTotal());
+                VentaMovimiento ventaMovimiento = new VentaMovimiento();
+                ventaMovimiento.setMovimiento(mov);
+                ventaMovimiento.setVenta(venta);
+                ventaMovimientos.add(ventaMovimiento);
+            });
+            venta.setVentaMovimientos(ventaMovimientos);
+            venta.setTotal(totalVenta.get());
+            ventaService.crearVenta(venta);
+        }else{
+            movimiento.getMovimientos().forEach(movimientoRequest -> {
+                movimientoRequest.setTipoMovimientoId(movimiento.getTipoMovimientoId());
+                registrarMovimiento(movimientoRequest);
+            });
+        }
     }
 
     @Override
-    public void registrarMovimiento(MovimientoRequest request) {
+    public Movimiento registrarMovimiento(MovimientoRequest request) {
         Movimiento movimiento = new Movimiento();
         Producto producto = new Producto();
         producto.setId(request.getProductoId());
@@ -91,19 +111,19 @@ public class MovimientoServiceImpl implements MovimientoService {
 
         movimiento.setUsuario(usuario!=null?usuario:new Usuario(1l,null,null,null,null,null));
 
-        movimientoRepository.save(movimiento);
+        return movimientoRepository.save(movimiento);
     }
 
 
     @Override
     public List<Movimiento> informeMovimientosEntreFechas(Long productoId,Boolean esVenta,Date fechaInicio, Date fechaFin) {
-        BetweenDate betweenDate = valideFechas(fechaInicio, fechaFin);
+        BetweenDate betweenDate = ValiDate.valideFechas(fechaInicio, fechaFin);
         return movimientoRepository.informeMovimientosEntreFechas(productoId,esVenta,betweenDate.getFechaInicio(), betweenDate.getFechaFin());
     }
 
     @Override
     public InformeVentasResponse informeVentasTotales(Long productoId, Date fechaInicio, Date fechaFin)  {
-        BetweenDate betweenDate = valideFechas(fechaInicio, fechaFin);
+        BetweenDate betweenDate = ValiDate.valideFechas(fechaInicio, fechaFin);
         List<Movimiento> movimientos = movimientoRepository.informeMovimientosEntreFechas(productoId,true,betweenDate.getFechaInicio(),betweenDate.getFechaFin());
 
         Map<String, ProductoVendidoResponse> map = new HashMap<>();
@@ -135,7 +155,7 @@ public class MovimientoServiceImpl implements MovimientoService {
     public InformeVentasXCostosResponse informeVentasTotalesXcosto(Long productoId) {
         //Generar informe de ventas contra costos de producción.
 
-        BetweenDate betweenDate = valideFechas(null, null);
+        BetweenDate betweenDate = ValiDate.valideFechas(null, null);
         List<Movimiento> movimientos = movimientoRepository.informeMovimientosEntreFechas(productoId,null,betweenDate.getFechaInicio(),betweenDate.getFechaFin());
         Map<String, ProductoVendidoResponse> map = new HashMap<>();
         AtomicReference<Double> totalVentas  = new AtomicReference<>(0d);
@@ -186,24 +206,5 @@ public class MovimientoServiceImpl implements MovimientoService {
         return response;
     }
 
-    private BetweenDate valideFechas(Date fechaInicio, Date fechaFin) {
-        BetweenDate betweenDate = new BetweenDate();
-        if (fechaInicio == null)
-            fechaInicio = new Date(0);
-        if (fechaFin == null)
-            fechaFin = new Date();
 
-        if (fechaInicio.after(fechaFin))
-            throw new IllegalArgumentException("La fecha de inicio no puede ser mayor a la fecha de fin");
-
-        fechaInicio.setHours(0);
-        fechaInicio.setMinutes(0);
-        fechaInicio.setSeconds(0);
-        fechaFin.setHours(23);
-        fechaFin.setMinutes(59);
-        fechaFin.setSeconds(59);
-        betweenDate.setFechaInicio(fechaInicio);
-        betweenDate.setFechaFin(fechaFin);
-        return betweenDate;
-    }
 }

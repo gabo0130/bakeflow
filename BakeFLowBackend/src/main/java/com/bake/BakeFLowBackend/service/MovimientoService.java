@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface MovimientoService {
-    void registrarMovimiento(MovimientoRequest movimiento);
+    Movimiento registrarMovimiento(MovimientoRequest movimiento);
 
     void registrarMovimiento(Movimiento movimiento);
 

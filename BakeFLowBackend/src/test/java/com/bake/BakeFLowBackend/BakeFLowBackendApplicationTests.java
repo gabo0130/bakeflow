@@ -76,10 +76,10 @@ System.out.println(x.getBody().toString());
 	@Test
 	void probarCreacionProductoYMovimientos() {
 
-		Integer cantidad = 10;
-		Double precioSugerido = 8000.0;
-		Double costoUnitario = 4000.50;
-		ProductoDTO productoDTO = crearProducto("pan de centeno", "El pan de centeno es un tipo de pan elaborado con harina de centeno, la panificación muestra una miga más oscura que el pan de trigo", precioSugerido, cantidad, 2L, costoUnitario);
+		Integer cantidad = 5;
+		Double precioSugerido = 5000.0;
+		Double costoUnitario = 3500.0;
+		ProductoDTO productoDTO = crearProducto("pan de jamon", "Un pan dulzón relleno de pasas (sin pipos), jamón cocido y ahumado, tocineta (bacon) y aceitunas", precioSugerido, cantidad, 2L, costoUnitario);
         String nombre = productoDTO.getNombre();
 		verificarExistencias(nombre, cantidad);
 
@@ -120,6 +120,7 @@ System.out.println(x.getBody().toString());
 		assertEquals(existenciasEsperadas, productoDTO.getExistencias(), "Error en verificación de existencias");
 	}
 
+	@Transactional
 	private void agregarExistencias(Long productoId, int cantidad, Double costoUnitario) {
 		System.out.println("******************** Se agregan más existencias (" + cantidad + ") ******************************");
 		MovimientoRequest movimientoRequest = new MovimientoRequest();
@@ -131,6 +132,7 @@ System.out.println(x.getBody().toString());
 		movimientoController.registrarMovimiento(movimientoRequest, null);
 	}
 
+	@Transactional
 	private void venderProductos(Long productoId, int cantidad, Double costoUnitario) {
 		System.out.println("******************** Se venden productos (" + cantidad + ") ******************************");
 		MovimientoRequest movimientoRequest = new MovimientoRequest();
