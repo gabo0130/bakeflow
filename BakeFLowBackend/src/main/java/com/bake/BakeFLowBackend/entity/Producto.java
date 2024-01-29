@@ -30,6 +30,9 @@ public class Producto {
     @JsonIgnoreProperties("productos")
     private Categoria categoria;
 
+    @Column(nullable = true)
+    private Boolean habilitado;
+
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("producto")
     private List<Movimiento> movimientos;

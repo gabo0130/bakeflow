@@ -82,7 +82,11 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public void eliminarProducto(Long id) {
-
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> {
+            return new IllegalArgumentException("Producto no encontrado");
+        });
+        producto.setHabilitado(false);
+        productoRepository.save(producto);
     }
 
     private void registrarMovimiento(ProductoDTO productoDTO, Producto producto){

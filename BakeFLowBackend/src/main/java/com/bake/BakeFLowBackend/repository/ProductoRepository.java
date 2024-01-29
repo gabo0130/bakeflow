@@ -15,7 +15,9 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
             "WHERE (:nombre IS NULL OR LOWER(p.nombre) LIKE %:nombre%) " +
             "AND (:descripcion IS NULL OR LOWER(p.descripcion) LIKE %:descripcion%) " +
             "AND (:categoriaId IS NULL OR p.categoria.id = :categoriaId) " +
-            "AND (:precio IS NULL OR p.precio = :precio)")
+            "AND (:precio IS NULL OR p.precio = :precio)"+
+            "AND (p.habilitado = true or p.habilitado is null)"
+    )
     List<Producto> buscarProductosConFiltros(String nombre, String descripcion, Long categoriaId, Double precio);
 
 }
