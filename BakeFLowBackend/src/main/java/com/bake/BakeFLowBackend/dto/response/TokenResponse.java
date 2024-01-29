@@ -1,4 +1,4 @@
-package com.bake.BakeFLowBackend.response;
+package com.bake.BakeFLowBackend.dto.response;
 
 import lombok.Data;
 
